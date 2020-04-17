@@ -4,6 +4,8 @@ import Container from "./components/Container";
 import Row from "./components/Row";
 import Column from "./components/Column";
 import characters from "./characters.json";
+import Header from "./components/Header";
+import "./index.css";
 
 class App extends Component {
 
@@ -15,7 +17,7 @@ class App extends Component {
       clickedCharacters: []
     }
     this.shuffleCards();
-    this.handleClick=this.handleClick.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick(character) {
@@ -24,8 +26,8 @@ class App extends Component {
   }
 
   shuffle(cardArray) {
-    for (let i = cardArray.length -1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i+1));
+    for (let i = cardArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
       [cardArray[i], cardArray[j]] = [cardArray[j], cardArray[i]];
     }
     return cardArray;
@@ -53,11 +55,11 @@ class App extends Component {
     });
     console.log("Already clicked?: ", isAlreadyClicked)
     if (isAlreadyClicked) {
-      this.gameLose();
+      this.lose();
     }
-    else if(this.state.score === 11) {
+    else if (this.state.score === 11) {
       this.incrementScore();
-      this.gameWon();
+      this.win();
     }
     else {
       let { clickedCharacters } = this.state;
@@ -66,50 +68,53 @@ class App extends Component {
       this.setState({ clickedCharacters });
       this.incrementScore();
       this.shuffleCards();
-      
+
     }
     console.log("clicked characters check win: ", this.state.clickedCharacters)
   }
 
-  resetGame() {
-    this.setState({ 
-        score: 0,
-        clickedCharacters: []
-     });
+  reset() {
+    this.setState({
+      score: 0,
+      clickedCharacters: []
+    });
 
   }
 
-  gameWon() {
-    this.resetGame();
+  win() {
+    this.reset();
   }
 
-  gameLose() {
-    this.resetGame();
+  lose() {
+    this.reset();
   }
 
+  refreshPage() {
+    window.location.reload();
+  }
 
   render() {
     return (
-      <Container>
-        <div>
-          { this.state.score }
-        </div>
+      <div>
+        <Header score={this.state.score} column="col-md-4" row="row" nav="navbar navbar-dark bg-light bg-secondary sticky-top" refreshPage={this.refreshPage}/>
+        <Container>
         <Row>
-          { this.state.characters.map(character => {
+          {this.state.characters.map(character => {
             return (
               <Column key={character.id} column="col-sm-3">
                 <CharacterCard
                   image={character.image}
-                  onClick={ () => {
-                    this.handleClick (character)
+                  onClick={() => {
+                    this.handleClick(character)
                   }
-                }
+                  }
                 />
               </Column>
             )
           })}
         </Row>
       </Container>
+      </div>
     );
   }
 }
